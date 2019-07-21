@@ -18,6 +18,7 @@ int updateH(Grid *g){
 		for(mm=0; mm < g->sizeX;mm++){
 			for(nn=0;nn < g->sizeY -1;nn++)
 				//printf("mm=%d,nn=%d\n",mm,nn); fflush(stderr);
+				//wrong index in fdtd.h
 				Hx(g,mm,nn) = Hx(g,mm,nn) - (Ez(g,mm,nn+1) - Ez(g,mm,nn)) * g->cdtd;
 		}
 		for(mm=0; mm < g->sizeX-1;mm++){
@@ -29,7 +30,7 @@ int updateH(Grid *g){
 			for(nn=0;nn < g->sizeY-1;nn++)
 			//mm nn in H for half, in Ey mm for int, nn for half; in Ex mm for half, nn for int
 			//the number of hz is M-1 * N-1 same to definition, so no cut-off on Hz, what is cut off!!!left start with mm nn, num depend on left
-			Hz(g,mm,nn) = Hz(g,mm,nn) - ( ( Ex(g,mm,nn+1) - Ex(g,mm,nn) ) - (Ey(g,mm+1,nn) - Ey(g,mm,nn) ) ) * g->cdtd;
+			Hz(g,mm,nn) = Hz(g,mm,nn) + ( ( Ex(g,mm,nn+1) - Ex(g,mm,nn) ) - (Ey(g,mm+1,nn) - Ey(g,mm,nn) ) ) * g->cdtd;
 		}
 	default: 
 		break;
@@ -53,7 +54,6 @@ int updateE(Grid *g){
 		//Ex at nn=0 nn=sizeX-1, all H start n-1
 		for(mm=0; mm < g->sizeX-1;mm++){
 			for(nn=1;nn < g->sizeY -1;nn++)
-				//printf("mm=%d,nn=%d\n",mm,nn); fflush(stderr);
 				Ex(g,mm,nn) = Ex(g,mm,nn) + (Hz(g,mm,nn) - Hz(g,mm,nn-1)) * g->cdtd;
 		}
 		//Ey at nn=0 nn=sizeX-1,H start m-1

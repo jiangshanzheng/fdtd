@@ -40,15 +40,20 @@ int main(){
 					fwrite(g->hy, sizeof(double), (g->sizeX-1)*(g->sizeY), tmpBy); 
 					fwrite(g->ez, sizeof(double), (g->sizeX)*(g->sizeY), tmpEz); 
 				case TEz:
-					fwrite(g->hx, sizeof(double), (g->sizeX-1)*(g->sizeY), tmpEx);
-					fwrite(g->hy, sizeof(double), (g->sizeX)*(g->sizeY-1), tmpEy); 
-					fwrite(g->ez, sizeof(double), (g->sizeX-1)*(g->sizeY-1), tmpBz);
+					fwrite(g->ex, sizeof(double), (g->sizeX-1)*(g->sizeY), tmpEx);
+					fwrite(g->ey, sizeof(double), (g->sizeX)*(g->sizeY-1), tmpEy); 
+					fwrite(g->hz, sizeof(double), (g->sizeX-1)*(g->sizeY-1), tmpBz);
 			}
 		}
 		updateH(g);
 		updateE(g);
 		printf("steps=%d\n",g->Ti);
-		Hz(g,g->sizeX/2,g->sizeY/2) = inc(g,0.0);
+		int loc;
+		double phs;
+		for(loc=20;loc<80;loc++){
+			phs=loc/60.*2*M_PI;
+			Ey(g,loc,g->sizeY/2) = sin(0.1*g->Ti)*cos(phs);
+		}
 	}
 	switch (g->type){
 		case TMz:
