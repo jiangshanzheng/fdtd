@@ -15,24 +15,51 @@ int main(){
 	Grid *g;
 	ALLOC_1D(g,1,Grid);
 	GridInit(g);
-	FILE * tmpEz = fopen("tmpEz.dat","wb");
-	FILE * tmpBx = fopen("tmpBx.dat","wb");
-	FILE * tmpBy = fopen("tmpBy.dat","wb");
+	FILE * tmpEz = NULL; 
+	FILE * tmpBx = NULL; 
+	FILE * tmpBy = NULL;
+
+	FILE * tmpBz = NULL; 
+	FILE * tmpEx = NULL; 
+	FILE * tmpEy = NULL; 
+	switch (g->type){
+		case TMz:
+			tmpEz = fopen("tmpEz.dat","wb");
+			tmpBx = fopen("tmpBx.dat","wb");
+			tmpBy = fopen("tmpBy.dat","wb");
+		case TEz:
+			tmpBz = fopen("tmpBz.dat","wb");
+			tmpEx = fopen("tmpEx.dat","wb");
+			tmpEy = fopen("tmpEy.dat","wb");
+	}
 	for(g->Ti=0; g->Ti < g->sizeT; g->Ti ++){
 		if (output &&  0 == g->Ti % DUMP){
-		fwrite(g->hx, sizeof(double), (g->sizeX)*(g->sizeY-1), tmpBx);
-		fwrite(g->hy, sizeof(double), (g->sizeX-1)*(g->sizeY), tmpBy); 
-		fwrite(g->ez, sizeof(double), (g->sizeX)*(g->sizeY), tmpEz); 
+			switch (g->type){
+				case TMz:
+					fwrite(g->hx, sizeof(double), (g->sizeX)*(g->sizeY-1), tmpBx);
+					fwrite(g->hy, sizeof(double), (g->sizeX-1)*(g->sizeY), tmpBy); 
+					fwrite(g->ez, sizeof(double), (g->sizeX)*(g->sizeY), tmpEz); 
+				case TEz:
+					fwrite(g->hx, sizeof(double), (g->sizeX-1)*(g->sizeY), tmpEx);
+					fwrite(g->hy, sizeof(double), (g->sizeX)*(g->sizeY-1), tmpEy); 
+					fwrite(g->ez, sizeof(double), (g->sizeX-1)*(g->sizeY-1), tmpBz);
+			}
 		}
-//	printf("fuck");
-	updateH(g);
-	updateE(g);
-	printf("steps=%d\n",g->Ti);
-	Ez(g,g->sizeX/2,g->sizeY/2) = inc(g,0.0);
+		updateH(g);
+		updateE(g);
+		printf("steps=%d\n",g->Ti);
+		Hz(g,g->sizeX/2,g->sizeY/2) = inc(g,0.0);
 	}
-	fclose(tmpEz);
-	fclose(tmpBy);
-	fclose(tmpBx);
+	switch (g->type){
+		case TMz:
+			fclose(tmpEz);
+			fclose(tmpBy);
+			fclose(tmpBx);
+		case TEz:
+			fclose(tmpBz);
+			fclose(tmpEy);
+			fclose(tmpEx);
+	}
 	return 0;
 }
 

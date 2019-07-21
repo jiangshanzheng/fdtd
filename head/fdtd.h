@@ -49,4 +49,10 @@ typedef struct Grid Grid;
 #define Hx(G,M,N) *(G->hx + (M) * (G->sizeY -1) + (N))
 #define Hy(G,M,N) *(G->hy + (M) * (G->sizeY) + (N))
 #define Ez(G,M,N) *(G->ez + (M) * (G->sizeY) + (N))
+
+/* TEz */
+//Hz M=x-1 N=y-1
+#define Ex(G,M,N) *(G->hx + (M) * (G->sizeY) + (N))
+#define Ey(G,M,N) *(G->hy + (M) * (G->sizeY-1) + (N))
+#define Hz(G,M,N) *(G->ez + (M) * (G->sizeY-1) + (N))
 #endif

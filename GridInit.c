@@ -11,7 +11,7 @@
 #include"GridInit.h"
 int GridInit(Grid * g){
 
-	g->type = TMz;
+	g->type = TEz;
 	g->sizeX = 101;
 	g->sizeY = 101;
 	g->sizeT = 300;
