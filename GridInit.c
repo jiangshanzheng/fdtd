@@ -11,19 +11,19 @@
 #include"GridInit.h"
 int GridInit(Grid * g){
 
-	g->type = TEz;
+	g->type = TMz;
 	g->sizeX = 101;
 	g->sizeY = 101;
 	g->sizeT = 300;
 	g->cdtd = 1/sqrt(2.0);
 	g->BLs = 0;
-	g->BLe = 0;
+	g->BLe = 101;
        	g->BRs = 0;
 	g->BRe = 0;
 	g->BBs = 0;
 	g->BBe = 0;
 	g->BTs = 0;
-	g->BTe = 100;
+	g->BTe = 0;
 	g->L0 = g->BLe - g->BLs;
 	g->L1 = g->BRe - g->BRs;
 	g->L2 = g->BBe - g->BBs;

@@ -58,6 +58,7 @@ typedef struct Grid Grid;
 
 /* TEz */
 //Hz M=x-1 N=y-1
+//N changes fastest
 #define Ex(G,M,N) *(G->ex + (M) * (G->sizeY) + (N))
 #define Ey(G,M,N) *(G->ey + (M) * (G->sizeY-1) + (N))
 #define Hz(G,M,N) *(G->hz + (M) * (G->sizeY-1) + (N))

@@ -59,16 +59,13 @@ int main(){
 		}
 		updateH(g);
 		updateE(g);
-		//abc(g);
-	//	printf("steps=%d\n",g->Ti);
-		int loc;
-		double phs;
-		//for(loc=20;loc<80;loc++){
-		//	phs=loc/60.*2*M_PI;
-		//Hz(g,20,g->sizeY/2) = sin(0.1*g->Ti)*cos(phas);
-		Hz(g,20,g->sizeY/2) = 0.00000001;
-		printf("%f,",Hz(g,20,g->sizeY/2));
-	//	}
+		abc(g);
+		printf("steps=%d\n",g->Ti);
+		//int loc;
+		//double phs;
+		//for(loc=0;loc<1;loc++){
+		//	phs=loc/128.*2*M_PI;
+		Ez(g,g->sizeX/2,g->sizeY/2) =inc(g,0.0);
 	}
 	switch (g->type){	
 		case OneD:

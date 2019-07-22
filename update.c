@@ -9,6 +9,7 @@
 #include<stdio.h>
 //q in E or q+1/2 in H
 //all H can be calc
+//we access them for mm then nn, so the first x=0,y=* data will be storged
 int updateH(Grid *g){
 	int mm,nn;
 	switch (g->type){
