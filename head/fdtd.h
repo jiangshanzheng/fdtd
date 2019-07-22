@@ -16,6 +16,12 @@ struct Grid{
 	double * hx, *hy, * ez;
 	//TEz
 	double * ex, *ey, * hz;
+//boundary
+	int L0, BLs, BLe;
+	int L1, BRs, BRe;
+	int L2, BBs, BBe;
+	int L3, BTs, BTe;
+
 
 	int sizeX,sizeY,sizeZ;
 	int Ti,sizeT;

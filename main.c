@@ -6,6 +6,7 @@
 #include"inc.h"
 #include"update.h"
 #include"GridInit.h"
+#include"abc.h"
 
 #define mu0 1
 #define epsi0 1
@@ -15,6 +16,7 @@ int main(){
 	Grid *g;
 	ALLOC_1D(g,1,Grid);
 	GridInit(g);
+//	BoundaryInit(g);
 	FILE * tmpEz = NULL; 
 	FILE * tmpBx = NULL; 
 	FILE * tmpBy = NULL;
@@ -22,6 +24,7 @@ int main(){
 	FILE * tmpBz = NULL; 
 	FILE * tmpEx = NULL; 
 	FILE * tmpEy = NULL; 
+	printf("%d",g->type);
 	switch (g->type){
 		case TMz:
 			tmpEz = fopen("tmpEz.dat","wb");
@@ -47,12 +50,13 @@ int main(){
 		}
 		updateH(g);
 		updateE(g);
-		printf("steps=%d\n",g->Ti);
+	//	abc(g);
+	//	printf("steps=%d\n",g->Ti);
 		int loc;
 		double phs;
 		for(loc=20;loc<80;loc++){
 			phs=loc/60.*2*M_PI;
-			Ey(g,loc,g->sizeY/2) = sin(0.1*g->Ti)*cos(phs);
+			Ez(g,loc,g->sizeY/2) = sin(0.1*g->Ti)*cos(phs);
 		}
 	}
 	switch (g->type){
