@@ -14,6 +14,7 @@ int updateH(Grid *g){
 	switch (g->type){
 	case OneD:
 		exit(127);
+		break;
 	case TMz:
 		for(mm=0; mm < g->sizeX;mm++){
 			for(nn=0;nn < g->sizeY -1;nn++)
@@ -25,6 +26,7 @@ int updateH(Grid *g){
 			for(nn=0;nn < g->sizeY;nn++)
 				Hy(g,mm,nn) = Hy(g,mm,nn) + (Ez(g,mm+1,nn) - Ez(g,mm,nn)) * g->cdtd;
 		}
+		break;
 	case TEz:
 		for(mm=0; mm < g->sizeX-1;mm++){
 			for(nn=0;nn < g->sizeY-1;nn++)
@@ -32,6 +34,7 @@ int updateH(Grid *g){
 			//the number of hz is M-1 * N-1 same to definition, so no cut-off on Hz, what is cut off!!!left start with mm nn, num depend on left
 			Hz(g,mm,nn) = Hz(g,mm,nn) + ( ( Ex(g,mm,nn+1) - Ex(g,mm,nn) ) - (Ey(g,mm+1,nn) - Ey(g,mm,nn) ) ) * g->cdtd;
 		}
+		break;
 	default: 
 		break;
 	}
@@ -45,11 +48,13 @@ int updateE(Grid *g){
 	switch (g->type){
 	case OneD:
 		exit(127);
+		break;
 	case TMz:
 		for(mm=1; mm < g->sizeX-1;mm++){
 			for(nn=1;nn < g->sizeY-1;nn++)
 			Ez(g,mm,nn) = Ez(g,mm,nn) + ( ( Hy(g,mm,nn) - Hy(g,mm-1,nn) ) - (Hx(g,mm,nn) - Hx(g,mm,nn-1) ) ) * g->cdtd;
 		}
+		break;
 	case TEz:
 		//Ex at nn=0 nn=sizeX-1, all H start n-1
 		for(mm=0; mm < g->sizeX-1;mm++){
@@ -61,8 +66,9 @@ int updateE(Grid *g){
 			for(nn=0;nn < g->sizeY-1;nn++)
 				Ey(g,mm,nn) = Ey(g,mm,nn) - (Hz(g,mm,nn) - Hz(g,mm-1,nn)) * g->cdtd;
 		}
+		break;
 	default:
-		 break;
+		break;
 	}
 	return 0;
 

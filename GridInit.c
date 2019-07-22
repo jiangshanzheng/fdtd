@@ -30,14 +30,18 @@ int GridInit(Grid * g){
 	g->L3 = g->BTe - g->BTs;
 
 	switch (g->type){
+		case OneD:
+			break;
 		case TMz:
 			ALLOC_2D( g->hx, g->sizeX , g->sizeY -1, double);
 			ALLOC_2D( g->hy, g->sizeX -1 , g->sizeY, double);
 			ALLOC_2D( g->ez, g->sizeX , g->sizeY, double);
+			break;
 		case TEz:
 			ALLOC_2D( g->ex, g->sizeX-1 , g->sizeY, double);
 			ALLOC_2D( g->ey, g->sizeX , g->sizeY-1, double);
 			ALLOC_2D( g->hz, g->sizeX-1 , g->sizeY-1, double);
+			break;
 	}
 
 	return 0;

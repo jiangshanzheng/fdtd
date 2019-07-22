@@ -51,6 +51,9 @@ int abc(Grid *g){
 
 	int mm,nn;
 	switch (g->type){
+		case OneD:
+			exit(127);
+			break;
 		case TMz:
 			//L
 			for(nn=0;nn<g->sizeY;nn++){
@@ -92,6 +95,10 @@ int abc(Grid *g){
 
 				}
 			}
+			break;
+		case TEz:
+			exit(127); 
+			break;
 
 	}
 
