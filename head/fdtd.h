@@ -25,6 +25,7 @@ struct Grid{
 
 	int sizeX,sizeY,sizeZ;
 	int Ti,sizeT;
+	int output,DUMP;
 	int type;
 	double cdtd;
 };

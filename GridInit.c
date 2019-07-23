@@ -12,9 +12,11 @@
 int GridInit(Grid * g){
 
 	g->type = TEz;
-	g->sizeX = 32;
-	g->sizeY = 512;
-	g->sizeT = 300;
+	g->sizeX = 1280;
+	g->sizeY = 10240;
+	g->sizeT = 3000;
+	g->output = 1;
+	g->DUMP	= 100;
 	g->cdtd = 1/sqrt(2.0);
 	
 	//TEz finial points must less then num it E components
