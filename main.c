@@ -59,29 +59,47 @@ int main(){
 		}
 		updateH(g);
 		updateE(g);
+		int mm = g->sizeX/2;
+		int nn;
+		for(nn=0;nn< g->sizeY-1;nn++){
+			Ey(g,mm,nn) = 0;
+		}
 		abc(g);
 		printf("steps=%d\n",g->Ti);
-		//int loc;
-		//double phs;
-		//for(loc=0;loc<1;loc++){
-		//	phs=loc/128.*2*M_PI;
-		Ez(g,g->sizeX/2,g->sizeY/2) =inc(g,0.0);
+		int x0=2.;		
+		int x1=13.;
+		int num_wg = 2;
+		int width_wg = 16;
+		int SLOC=100;
+		int loc;
+		double phs;
+		int i_wg;
+		for(i_wg=0;i_wg<num_wg;i_wg++){
+			int offset = i_wg * width_wg;
+			for(loc=x0+offset;loc<x1+offset;loc++){
+			//	printf("seting");
+				phs= num_wg / (loc)/(width_wg) *2*M_PI;
+				Ey(g,loc,SLOC) += sin(1.*g->Ti - phs);
+			}
+		}
+//		Ey(g,50,50) = sin(0.1*g->Ti);
+//		Ey(g,g->sizeX/2,g->sizeY/2) = inc(g,0.0);
 	}
-	switch (g->type){	
-		case OneD:
-			exit(127);
-			break;
-		case TMz:
-			fclose(tmpEz);
-			fclose(tmpBy);
-			fclose(tmpBx);
-			break;
-		case TEz:
-			fclose(tmpBz);
-			fclose(tmpEy);
-			fclose(tmpEx);
-			break;
+		switch (g->type){	
+			case OneD:
+				exit(127);
+				break;
+			case TMz:
+				fclose(tmpEz);
+				fclose(tmpBy);
+				fclose(tmpBx);
+				break;
+			case TEz:
+				fclose(tmpBz);
+				fclose(tmpEy);
+				fclose(tmpEx);
+				break;
+		}
+		return 0;
 	}
-	return 0;
-}
 

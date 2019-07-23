@@ -1,6 +1,6 @@
-CC=gcc
+CC=gcc 
 head=./head/
-CFLAG=-g -I$(head) 
+CFLAG=-g -O3 -I$(head) 
 sources=inc.o main.o update.o GridInit.o abc.o
 a.out: $(sources)
 	$(CC) -o a.out $(CFLAG) $(sources) -lm

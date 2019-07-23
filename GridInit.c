@@ -11,23 +11,32 @@
 #include"GridInit.h"
 int GridInit(Grid * g){
 
-	g->type = TMz;
-	g->sizeX = 101;
-	g->sizeY = 101;
+	g->type = TEz;
+	g->sizeX = 32;
+	g->sizeY = 512;
 	g->sizeT = 300;
 	g->cdtd = 1/sqrt(2.0);
-	g->BLs = 0;
-	g->BLe = 101;
-       	g->BRs = 0;
-	g->BRe = 0;
-	g->BBs = 0;
-	g->BBe = 0;
-	g->BTs = 0;
-	g->BTe = 0;
-	g->L0 = g->BLe - g->BLs;
-	g->L1 = g->BRe - g->BRs;
-	g->L2 = g->BBe - g->BBs;
-	g->L3 = g->BTe - g->BTs;
+	
+	//TEz finial points must less then num it E components
+	//macro will not check over boundary
+	//allocation for boundy fields is large then its real size
+	g->BLb = 0;
+	g->BLt = g->sizeY -1 ;
+	g->BLt = 0;
+       	
+	g->BRb = 0;
+	g->BRt = g->sizeY -1;
+	g->BRt = 0;
+	
+	g->BBl = 0;
+	g->BBr = g->sizeX-1;
+
+	g->BTl = 0;
+	g->BTr = g->sizeX-1;
+	g->LL = g->BLt - g->BLb;
+	g->LR = g->BRt - g->BRb;
+	g->LB = g->BBr - g->BBl;
+	g->LT = g->BTr - g->BTl;
 
 	switch (g->type){
 		case OneD:
