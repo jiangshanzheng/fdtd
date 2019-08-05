@@ -1,35 +1,49 @@
 /*************************************************************************
-	> File Name: gridinit.c
-	> Author: 
-	> Mail: 
-	> Created Time: Sat Jul 20 16:39:37 2019
+  > File Name: gridinit.c
+  > Author: 
+  > Mail: 
+  > Created Time: Sat Jul 20 16:39:37 2019
  ************************************************************************/
 
 #include<stdio.h>
 #include<math.h>
 #include"fdtd.h"
 #include"GridInit.h"
+void coef_Ex(Grid *g,int smm, int emm, int snn, int enn);
+void coef_Ey(Grid *g,int smm, int emm, int snn, int enn);
+void coef_Ez(Grid *g,int smm, int emm, int snn, int enn);
+void coef_Hx(Grid *g,int smm, int emm, int snn, int enn);
+void coef_Hy(Grid *g,int smm, int emm, int snn, int enn);
+void coef_Hz(Grid *g,int smm, int emm, int snn, int enn);
+
+double mur=1.0;
+double epsir=1.0;
 int GridInit(Grid * g){
 
-	g->type = TEz;
-	g->sizeX = 1280;
-	g->sizeY = 10240;
-	g->sizeT = 3000;
+	g->type = TMz;
+	g->sizeX = 128;
+	g->sizeY = 128;
+	g->sizeT = 300;
 	g->output = 1;
-	g->DUMP	= 100;
-	g->cdtd = 1/sqrt(2.0);
-	
+	g->DUMP	= 1;
+	g->dt  = 1./sqrt(2);
+	g->dx = 1.;
+	g->c = 1.;
+	g->imp0 = 1.;
+	g->cdtds = g->c *g->dt/ g->dx;
+
 	//TEz finial points must less then num it E components
 	//macro will not check over boundary
 	//allocation for boundy fields is large then its real size
+	g->PML_Layers = 20;
 	g->BLb = 0;
 	g->BLt = g->sizeY -1 ;
 	g->BLt = 0;
-       	
+
 	g->BRb = 0;
 	g->BRt = g->sizeY -1;
 	g->BRt = 0;
-	
+
 	g->BBl = 0;
 	g->BBr = g->sizeX-1;
 
@@ -47,6 +61,7 @@ int GridInit(Grid * g){
 			ALLOC_2D( g->hx, g->sizeX , g->sizeY -1, double);
 			ALLOC_2D( g->hy, g->sizeX -1 , g->sizeY, double);
 			ALLOC_2D( g->ez, g->sizeX , g->sizeY, double);
+
 			break;
 		case TEz:
 			ALLOC_2D( g->ex, g->sizeX-1 , g->sizeY, double);
@@ -58,3 +73,493 @@ int GridInit(Grid * g){
 	return 0;
 }
 
+int PMLInit(Grid * g){
+//	extern double sig_my,sig_mx,sig_x,sig_y;
+//	extern double mur=1.0;
+//	extern double epsir=1.0;
+int smm,emm,snn,enn;
+int mm,nn;
+	switch (g->type){
+		case OneD:
+			break;
+		case TMz:
+			ALLOC_2D( g->ezx, g->sizeX , g->sizeY, double);
+			ALLOC_2D( g->ezy, g->sizeX , g->sizeY, double);
+			//should check allocation
+			//ALLOC_2D( g->sig_my, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->chxe, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->chxh, g->sizeX , g->sizeY -1, double);
+
+			//ALLOC_2D( g->sig_mx, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->chye, g->sizeX -1 , g->sizeY, double);
+			ALLOC_2D( g->chyh, g->sizeX -1 , g->sizeY, double);
+
+			//ALLOC_2D( g->sig_x, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->cezxe, g->sizeX , g->sizeY, double);
+			ALLOC_2D( g->cezxh, g->sizeX , g->sizeY, double);
+
+			//ALLOC_2D( g->sig_y, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->cezye, g->sizeX , g->sizeY, double);
+			ALLOC_2D( g->cezyh, g->sizeX , g->sizeY, double);
+			for(mm=0; mm < g->sizeX;mm++){
+				for(nn=0;nn < g->sizeY -1;nn++){
+					cHxE(g,mm,nn) = g->imp0 * g->cdtds;
+					cHxH(g,mm,nn) = 1.0;
+				}
+			}
+			for(mm=0; mm < g->sizeX-1;mm++){
+				for(nn=0;nn < g->sizeY;nn++){
+					cHyE(g,mm,nn) = g->imp0 * g->cdtds;
+					cHyH(g,mm,nn) = 1.0;
+				}
+			}
+			for(mm=0; mm < g->sizeX;mm++){
+				for(nn=0;nn < g->sizeY;nn++){
+					cEzxH(g,mm,nn) = g->imp0 * g->cdtds;
+					cEzxE(g,mm,nn) = 1.0;
+					cEzyH(g,mm,nn) = g->imp0 * g->cdtds;
+					cEzyE(g,mm,nn) = 1.0;
+				}
+			}
+			sig_mx=0.1;
+			sig_my=0.1;
+			sig_x=0.1;
+			sig_y=0.1;
+			//conner 00
+			smm=0;
+			emm=g->PML_Layers;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Hx(g,smm,emm,snn,enn);
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=0;
+			enn= g->PML_Layers;
+			coef_Hy(g,smm,emm,snn,enn);
+
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=0;
+			enn= g->PML_Layers;
+			coef_Ez(g,smm,emm,snn,enn);
+
+
+			//conner 10
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Hx(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers -1;
+			emm=g->sizeX-1;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Hy(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Ez(g,smm,emm,snn,enn);
+
+
+			//conner 01
+			smm=0;
+			emm=g->PML_Layers;
+			snn=g->sizeY - g-> PML_Layers -1;
+			enn=g->sizeY-1;
+			coef_Hx(g,smm,emm,snn,enn);		
+
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Hy(g,smm,emm,snn,enn);		
+
+			smm=0;
+			emm=g->PML_Layers;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Ez(g,smm,emm,snn,enn);		
+
+			//conner 11
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=g->sizeY - g-> PML_Layers -1;
+			enn=g->sizeY-1;
+			coef_Hx(g,smm,emm,snn,enn);		
+
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Hy(g,smm,emm,snn,enn);		
+
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Ez(g,smm,emm,snn,enn);		
+
+			//ridges B T
+			sig_mx=0.;
+			sig_my=0.1;
+			sig_x=0.;
+			sig_y=0.1;
+
+			smm=g->PML_Layers;
+			emm=g->sizeX - g->PML_Layers;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Hx(g,smm,emm,snn,enn);
+
+			smm=g->PML_Layers-1;
+			emm=g->sizeX - g->PML_Layers-1;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Hy(g,smm,emm,snn,enn);
+
+
+
+			smm=g->PML_Layers;
+			emm=g->sizeX - g->PML_Layers;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Ez(g,smm,emm,snn,enn);
+			//ridge T
+			smm=g->PML_Layers;
+			emm=g->sizeX - g->PML_Layers;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Hx(g,smm,emm,snn,enn);
+
+			smm=g->PML_Layers-1;
+			emm=g->sizeX - g->PML_Layers-1;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Hy(g,smm,emm,snn,enn);
+
+			smm=g->PML_Layers;
+			emm=g->sizeX - g->PML_Layers;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Ez(g,smm,emm,snn,enn);
+
+			//ridge L R
+			sig_mx=0.1;
+			sig_my=0.0;
+			sig_x=0.1;
+			sig_y=0.0;
+			smm=0;
+			emm=g->PML_Layers;
+			snn=g-> PML_Layers-1;
+			enn=g->sizeY - g-> PML_Layers-1;
+			coef_Hx(g,smm,emm,snn,enn);
+
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=g-> PML_Layers;
+			enn=g->sizeY - g-> PML_Layers;
+			coef_Hy(g,smm,emm,snn,enn);
+
+			smm=0;
+			emm=g->PML_Layers;
+			snn=g-> PML_Layers;
+			enn=g->sizeY - g-> PML_Layers;
+			coef_Ez(g,smm,emm,snn,enn);
+
+			//ridge R	
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=g-> PML_Layers-1;
+			enn=g->sizeY - g-> PML_Layers-1;
+			coef_Hx(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers -1;
+			emm=g->sizeX-1;
+			snn=g-> PML_Layers;
+			enn=g->sizeY - g-> PML_Layers;
+			coef_Hy(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=g-> PML_Layers;
+			enn=g->sizeY - g-> PML_Layers;
+			coef_Ez(g,smm,emm,snn,enn);
+			break;
+		case TEz:
+			ALLOC_2D( g->hzx, g->sizeX-1 , g->sizeY-1, double);
+			ALLOC_2D( g->hzy, g->sizeX-1 , g->sizeY-1, double);
+			//should check allocation
+			//ALLOC_2D( g->sig_my, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->ceye, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->ceyh, g->sizeX , g->sizeY -1, double);
+
+			//ALLOC_2D( g->sig_mx, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->cexe, g->sizeX -1 , g->sizeY, double);
+			ALLOC_2D( g->cexh, g->sizeX -1 , g->sizeY, double);
+
+			//ALLOC_2D( g->sig_x, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->chzxe, g->sizeX-1 , g->sizeY-1, double);
+			ALLOC_2D( g->chzxh, g->sizeX-1 , g->sizeY-1, double);
+
+			//ALLOC_2D( g->sig_y, g->sizeX , g->sizeY -1, double);
+			ALLOC_2D( g->chzye, g->sizeX-1 , g->sizeY-1, double);
+			ALLOC_2D( g->chzyh, g->sizeX-1 , g->sizeY-1, double);
+			for(mm=0; mm < g->sizeX;mm++){
+				for(nn=0;nn < g->sizeY -1;nn++){
+					cEyH(g,mm,nn) = g->imp0 * g->cdtds;
+					cEyE(g,mm,nn) = 1.0;
+				}
+			}
+			for(mm=0; mm < g->sizeX-1;mm++){
+				for(nn=0;nn < g->sizeY;nn++){
+					cExH(g,mm,nn) = g->imp0 * g->cdtds;
+					cExE(g,mm,nn) = 1.0;
+				}
+			}
+			for(mm=0; mm < g->sizeX-1;mm++){
+				for(nn=0;nn < g->sizeY-1;nn++){
+					cHzxE(g,mm,nn) = g->imp0 * g->cdtds;
+					cHzxH(g,mm,nn) = 1.0;
+					cHzyE(g,mm,nn) = g->imp0 * g->cdtds;
+					cHzyH(g,mm,nn) = 1.0;
+				}
+			}
+			sig_mx=0.1;
+			sig_my=0.1;
+			sig_x=0.1;
+			sig_y=0.1;
+			//conner 00
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Ex(g,smm,emm,snn,enn);
+			smm=0;
+			emm=g->PML_Layers;
+			snn=0;
+			enn= g->PML_Layers-1;
+			coef_Ey(g,smm,emm,snn,enn);
+
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=0;
+			enn= g->PML_Layers-1;
+			coef_Hz(g,smm,emm,snn,enn);
+
+
+			//conner 10
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Ex(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Ey(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Hz(g,smm,emm,snn,enn);
+
+
+			//conner 01
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Ex(g,smm,emm,snn,enn);		
+
+			smm=0;
+			emm=g->PML_Layers;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Ey(g,smm,emm,snn,enn);		
+
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Hz(g,smm,emm,snn,enn);		
+
+			//conner 11
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Ex(g,smm,emm,snn,enn);		
+
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Ey(g,smm,emm,snn,enn);		
+
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Hz(g,smm,emm,snn,enn);		
+
+			//ridges B T
+			sig_mx=0.;
+			sig_my=0.1;
+			sig_x=0.;
+			sig_y=0.1;
+
+			smm=g->PML_Layers-1;
+			emm=g->sizeX - g->PML_Layers-1;
+			snn=0;
+			enn=g->PML_Layers;
+			coef_Ex(g,smm,emm,snn,enn);
+
+			smm=g->PML_Layers;
+			emm=g->sizeX - g->PML_Layers;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Ey(g,smm,emm,snn,enn);
+
+
+
+			smm=g->PML_Layers-1;
+			emm=g->sizeX - g->PML_Layers-1;
+			snn=0;
+			enn=g->PML_Layers-1;
+			coef_Hz(g,smm,emm,snn,enn);
+			//ridge T
+			smm=g->PML_Layers-1;
+			emm=g->sizeX - g->PML_Layers-1;
+			snn=g->sizeY - g-> PML_Layers;
+			enn=g->sizeY;
+			coef_Ex(g,smm,emm,snn,enn);
+
+			smm=g->PML_Layers;
+			emm=g->sizeX - g->PML_Layers;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Ey(g,smm,emm,snn,enn);
+
+			smm=g->PML_Layers-1;
+			emm=g->sizeX - g->PML_Layers-1;
+			snn=g->sizeY - g-> PML_Layers-1;
+			enn=g->sizeY-1;
+			coef_Hz(g,smm,emm,snn,enn);
+
+			//ridge L R
+			sig_mx=0.1;
+			sig_my=0.0;
+			sig_x=0.1;
+			sig_y=0.0;
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=g-> PML_Layers;
+			enn=g->sizeY - g-> PML_Layers;
+			coef_Ex(g,smm,emm,snn,enn);
+
+			smm=0;
+			emm=g->PML_Layers;
+			snn=g-> PML_Layers -1;
+			enn=g->sizeY - g-> PML_Layers-1;
+			coef_Ey(g,smm,emm,snn,enn);
+
+			smm=0;
+			emm=g->PML_Layers-1;
+			snn=g-> PML_Layers-1;
+			enn=g->sizeY - g-> PML_Layers-1;
+			coef_Hz(g,smm,emm,snn,enn);
+
+			//ridge R	
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=g-> PML_Layers;
+			enn=g->sizeY - g-> PML_Layers;
+			coef_Ex(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers;
+			emm=g->sizeX;
+			snn=g-> PML_Layers-1;
+			enn=g->sizeY - g-> PML_Layers-1;
+			coef_Ey(g,smm,emm,snn,enn);
+
+			smm=g->sizeX - g-> PML_Layers-1;
+			emm=g->sizeX-1;
+			snn=g-> PML_Layers-1;
+			enn=g->sizeY - g-> PML_Layers-1;
+			coef_Hz(g,smm,emm,snn,enn);
+
+
+			break;
+	}
+	return 0;
+}
+//TMz
+inline void coef_Hy(Grid *g,int smm, int emm, int snn, int enn){
+	int mm,nn;
+	for(mm=smm; mm < emm; mm++){
+		for(nn= snn ;nn<enn ; nn++){
+			cHyE(g,mm,nn) = g->imp0 * g->cdtds /mur / (1.0 + sig_mx * g->dt / 2/ mur);  
+			cHyH(g,mm,nn) = (1. - sig_mx * g->dt/2/mur)/(1. + sig_mx * g->dt/2/mur);      
+		}
+	}
+}
+inline void coef_Hx(Grid *g,int smm, int emm, int snn, int enn){
+	int mm,nn;
+	for(mm=smm; mm < emm; mm++){
+		for(nn= snn ;nn<enn ; nn++){
+			cHxE(g,mm,nn) = g->imp0 * g->cdtds /mur / (1.0 + sig_my * g->dt / 2/ mur)  ;  
+			cHxH(g,mm,nn) = (1. - sig_my * g->dt/2/mur)/(1. + sig_my * g->dt/2/mur);
+		}
+	}
+}
+inline void coef_Ez(Grid *g,int smm, int emm, int snn, int enn){
+	int mm,nn;
+	for(mm=smm; mm < emm; mm++){
+		for(nn= snn ;nn<enn ; nn++){
+			cEzxH(g,mm,nn) = g->imp0 * g->cdtds /epsir / (1.0 + sig_x * g->dt / 2/ epsir); 
+			cEzxE(g,mm,nn) = (1. - sig_x * g->dt/2/epsir)/(1. + sig_x * g->dt/2/epsir);   
+
+			cEzyH(g,mm,nn) = g->imp0 * g->cdtds /epsir / (1.0 + sig_y * g->dt / 2/ epsir); 
+			cEzyE(g,mm,nn) = (1. - sig_y * g->dt/2/epsir)/(1. + sig_y * g->dt/2/epsir);   
+
+		}
+	}
+}
+//TEz
+inline void coef_Ey(Grid *g,int smm, int emm, int snn, int enn){
+	int mm,nn;
+	for(mm=smm; mm < emm; mm++){
+		for(nn= snn ;nn<enn ; nn++){
+			cEyH(g,mm,nn) = g->imp0 * g->cdtds /epsir / (1.0 + sig_y * g->dt / 2/ epsir);  
+			cEyE(g,mm,nn) = (1. - sig_y * g->dt/2/epsir)/(1. + sig_y * g->dt/2/epsir);      
+		}
+	}
+}
+inline void coef_Ex(Grid *g,int smm, int emm, int snn, int enn){
+	int mm,nn;
+	for(mm=smm; mm < emm; mm++){
+		for(nn= snn ;nn<enn ; nn++){
+			cExH(g,mm,nn) = g->imp0 * g->cdtds /epsir / (1.0 + sig_y * g->dt / 2/ epsir);  
+			cExE(g,mm,nn) = (1. - sig_y * g->dt/2/epsir)/(1. + sig_y * g->dt/2/epsir);      
+		}
+	}
+}
+inline void coef_Hz(Grid *g,int smm, int emm, int snn, int enn){
+	int mm,nn;
+	for(mm=smm; mm < emm; mm++){
+		for(nn= snn ;nn<enn ; nn++){
+			cHzxE(g,mm,nn) = g->imp0 * g->cdtds /mur / (1.0 + sig_mx * g->dt / 2/ mur); 
+			cHzxH(g,mm,nn) = (1. - sig_mx * g->dt/2/mur)/(1. + sig_mx * g->dt/2/mur);   
+
+			cHzyE(g,mm,nn) = g->imp0 * g->cdtds /mur / (1.0 + sig_my * g->dt / 2/ mur); 
+			cHzyH(g,mm,nn) = (1. - sig_my * g->dt/2/mur)/(1. + sig_my * g->dt/2/mur);   
+		}
+	}
+}
+//mur epsi visible

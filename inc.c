@@ -12,7 +12,7 @@
 double inc(Grid *g, double location){
 	//double phs;
 	double coef;
-	coef = M_PI *  ( (g->cdtd * g->Ti - location)/ppw - 1.);
+	coef = M_PI *  ( (g->cdtds * g->Ti - location)/ppw - 1.);
 	coef=coef*coef;
 	return ( 1. - 2.* coef )* exp(-coef);
 }

@@ -56,7 +56,7 @@ void BoundaryInit(Grid *g){
 			break;
 		}
 	//Sc
-	double tmp1 = g->cdtd;
+	double tmp1 = g->cdtds;
 	double tmp2 = - 1./( 1./tmp1 + 2. + tmp1);
 	coef[0] = (1./tmp1 - 2. + tmp1)*tmp2;
 	coef[1] = 2.*(tmp1 - 1./tmp1)*tmp2;
