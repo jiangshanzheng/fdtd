@@ -40,6 +40,8 @@ int updateH_pml(Grid *g){
 					Hzx(g,mm,nn) = cHzxH(g,mm,nn)*Hzx(g,mm,nn) + cHzxE(g,mm,nn)*( - ( Ey(g,mm,nn) - Ey(g,mm-1,nn) ));
 					Hzy(g,mm,nn) = cHzyH(g,mm,nn)*Hzy(g,mm,nn) + cHzyE(g,mm,nn)*( ( Ex(g,mm,nn) - Ex(g,mm,nn-1) ));
 					Hz(g,mm,nn) = Hzx(g,mm,nn) + Hzy(g,mm,nn);
+					printf("%.1f\n",Hz(g,mm,nn));
+					//printf("%.1f-%.1f-%.1f-%.1f\n",cHzxE(g,mm,nn),cHzxH(g,mm,nn),cHzyE(g,mm,nn),cHzyH(g,mm,nn));
 				}
 			}
 			break;

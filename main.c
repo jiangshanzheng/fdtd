@@ -68,14 +68,18 @@ int main(){
 
 		begin = clock();
 		
+		//printf("%f\n",Hz(g,g->sizeX/2,g->sizeY/2));
 		updateH_pml(g);
+		//updateH(g);
+		//Hz(g,g->sizeX/2,g->sizeY/2) += 10.0*sin(0.1*g->Ti);
 		
 		updateE_pml(g);
+		//updateE(g);
 		
 		//abc(g);
 		//S
-		//Ez(g,g->sizeX/2,g->sizeY/2) = inc(g,0.0);
-		Ez(g,g->sizeX/2,g->sizeY/2) += sin(0.1*g->Ti);
+		Ez(g,g->sizeX/2,g->sizeY/2) = 100.*inc(g,0.0);
+		//Hz(g,g->sizeX/2,g->sizeY/2) += sin(0.1*g->Ti);
 		
 		end=clock();
 		double Tfield = (double)(end - begin) / CLOCKS_PER_SEC;

@@ -9,12 +9,6 @@
 #define _FDTD_H
 #include<stdio.h>
 #include<stdlib.h>
-extern double sig_my;
-extern double sig_mx;
-extern double sig_x;
-extern double sig_y;
-extern double mur;
-extern double epsir;
 enum GRID_TYPE {OneD, TMz, TEz,ThreeD};
 
 struct Grid{

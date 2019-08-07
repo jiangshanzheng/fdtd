@@ -9,6 +9,7 @@
 #include<math.h>
 #include"fdtd.h"
 #include"GridInit.h"
+#define VAL 0.05
 void coef_Ex(Grid *g,int smm, int emm, int snn, int enn);
 void coef_Ey(Grid *g,int smm, int emm, int snn, int enn);
 void coef_Ez(Grid *g,int smm, int emm, int snn, int enn);
@@ -16,13 +17,17 @@ void coef_Hx(Grid *g,int smm, int emm, int snn, int enn);
 void coef_Hy(Grid *g,int smm, int emm, int snn, int enn);
 void coef_Hz(Grid *g,int smm, int emm, int snn, int enn);
 
-double mur=1.0;
-double epsir=1.0;
+static double sig_my;
+static double sig_mx;
+static double sig_x;
+static double sig_y;
+static double mur=1.0;
+static double epsir=1.0;
 int GridInit(Grid * g){
 
 	g->type = TMz;
-	g->sizeX = 128;
-	g->sizeY = 128;
+	g->sizeX = 148;
+	g->sizeY = 148;
 	g->sizeT = 300;
 	g->output = 1;
 	g->DUMP	= 1;
@@ -35,7 +40,7 @@ int GridInit(Grid * g){
 	//TEz finial points must less then num it E components
 	//macro will not check over boundary
 	//allocation for boundy fields is large then its real size
-	g->PML_Layers = 20;
+	g->PML_Layers = 40;
 	g->BLb = 0;
 	g->BLt = g->sizeY -1 ;
 	g->BLt = 0;
@@ -121,25 +126,22 @@ int mm,nn;
 					cEzyE(g,mm,nn) = 1.0;
 				}
 			}
-			sig_mx=0.1;
-			sig_my=0.1;
-			sig_x=0.1;
-			sig_y=0.1;
+			sig_mx=VAL;
+			sig_my=VAL;
+			sig_x=VAL;
+			sig_y=VAL;
 			//conner 00
 			smm=0;
 			emm=g->PML_Layers;
 			snn=0;
 			enn=g->PML_Layers-1;
 			coef_Hx(g,smm,emm,snn,enn);
-			smm=0;
+	
 			emm=g->PML_Layers-1;
-			snn=0;
 			enn= g->PML_Layers;
 			coef_Hy(g,smm,emm,snn,enn);
 
-			smm=0;
 			emm=g->PML_Layers-1;
-			snn=0;
 			enn= g->PML_Layers;
 			coef_Ez(g,smm,emm,snn,enn);
 
@@ -153,13 +155,11 @@ int mm,nn;
 
 			smm=g->sizeX - g-> PML_Layers -1;
 			emm=g->sizeX-1;
-			snn=0;
 			enn=g->PML_Layers;
 			coef_Hy(g,smm,emm,snn,enn);
 
 			smm=g->sizeX - g-> PML_Layers;
 			emm=g->sizeX;
-			snn=0;
 			enn=g->PML_Layers;
 			coef_Ez(g,smm,emm,snn,enn);
 
@@ -171,13 +171,11 @@ int mm,nn;
 			enn=g->sizeY-1;
 			coef_Hx(g,smm,emm,snn,enn);		
 
-			smm=0;
 			emm=g->PML_Layers-1;
 			snn=g->sizeY - g-> PML_Layers;
 			enn=g->sizeY;
 			coef_Hy(g,smm,emm,snn,enn);		
 
-			smm=0;
 			emm=g->PML_Layers;
 			snn=g->sizeY - g-> PML_Layers;
 			enn=g->sizeY;
@@ -204,9 +202,9 @@ int mm,nn;
 
 			//ridges B T
 			sig_mx=0.;
-			sig_my=0.1;
+			sig_my=VAL;
 			sig_x=0.;
-			sig_y=0.1;
+			sig_y=VAL;
 
 			smm=g->PML_Layers;
 			emm=g->sizeX - g->PML_Layers;
@@ -216,7 +214,6 @@ int mm,nn;
 
 			smm=g->PML_Layers-1;
 			emm=g->sizeX - g->PML_Layers-1;
-			snn=0;
 			enn=g->PML_Layers;
 			coef_Hy(g,smm,emm,snn,enn);
 
@@ -224,9 +221,9 @@ int mm,nn;
 
 			smm=g->PML_Layers;
 			emm=g->sizeX - g->PML_Layers;
-			snn=0;
 			enn=g->PML_Layers;
 			coef_Ez(g,smm,emm,snn,enn);
+			
 			//ridge T
 			smm=g->PML_Layers;
 			emm=g->sizeX - g->PML_Layers;
@@ -247,9 +244,9 @@ int mm,nn;
 			coef_Ez(g,smm,emm,snn,enn);
 
 			//ridge L R
-			sig_mx=0.1;
+			sig_mx=VAL;
 			sig_my=0.0;
-			sig_x=0.1;
+			sig_x=VAL;
 			sig_y=0.0;
 			smm=0;
 			emm=g->PML_Layers;
@@ -409,11 +406,11 @@ int mm,nn;
 			coef_Hz(g,smm,emm,snn,enn);		
 
 			//ridges B T
-			sig_mx=0.;
-			sig_my=0.1;
-			sig_x=0.;
-			sig_y=0.1;
-
+			sig_mx=0.1;
+			sig_my=0.0;
+			sig_x=0.1;
+			sig_y=0.0;
+	
 			smm=g->PML_Layers-1;
 			emm=g->sizeX - g->PML_Layers-1;
 			snn=0;
@@ -453,10 +450,10 @@ int mm,nn;
 			coef_Hz(g,smm,emm,snn,enn);
 
 			//ridge L R
-			sig_mx=0.1;
-			sig_my=0.0;
-			sig_x=0.1;
-			sig_y=0.0;
+			sig_mx=0.;
+			sig_my=0.1;
+			sig_x=0.;
+			sig_y=0.1;
 			smm=0;
 			emm=g->PML_Layers-1;
 			snn=g-> PML_Layers;
@@ -536,8 +533,8 @@ inline void coef_Ey(Grid *g,int smm, int emm, int snn, int enn){
 	int mm,nn;
 	for(mm=smm; mm < emm; mm++){
 		for(nn= snn ;nn<enn ; nn++){
-			cEyH(g,mm,nn) = g->imp0 * g->cdtds /epsir / (1.0 + sig_y * g->dt / 2/ epsir);  
-			cEyE(g,mm,nn) = (1. - sig_y * g->dt/2/epsir)/(1. + sig_y * g->dt/2/epsir);      
+			cEyH(g,mm,nn) = g->imp0 * g->cdtds /epsir / (1.0 + sig_x * g->dt / 2/ epsir);  
+			cEyE(g,mm,nn) = (1. - sig_x * g->dt/2/epsir)/(1. + sig_x * g->dt/2/epsir);      
 		}
 	}
 }
