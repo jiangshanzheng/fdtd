@@ -5,6 +5,8 @@
 #include<time.h>
 #include"fdtd.h"
 #include"inc.h"
+#include"inc.h"
+#include"filter.h"
 #include"update.h"
 #include"update_pml.h"
 #include"GridInit.h"
@@ -42,8 +44,8 @@ int main(){
 	}
 	clock_t begin, end;
 	for(g->Ti=0; g->Ti < g->sizeT; g->Ti ++){
-	
-	//	storge
+
+		//	storge
 		if (g->output &&  0 == g->Ti % g->DUMP){
 			begin = clock();
 			switch (g->type){
@@ -67,40 +69,52 @@ int main(){
 		}
 
 		begin = clock();
-		
+
 		//printf("%f\n",Hz(g,g->sizeX/2,g->sizeY/2));
-		updateH_pml(g);
-		//updateH(g);
+		//updateH_pml(g);
+		updateH(g);
 		//Hz(g,g->sizeX/2,g->sizeY/2) += 10.0*sin(0.1*g->Ti);
-		
-		updateE_pml(g);
-		//updateE(g);
-		
-		//abc(g);
-		//S
-		Ez(g,g->sizeX/2,g->sizeY/2) = 100.*inc(g,0.0);
-		//Hz(g,g->sizeX/2,g->sizeY/2) += sin(0.1*g->Ti);
-		
+
+		//updateE_pml(g);
+		updateE(g);
+		abc(g);
+		filterE(g);
+		int width = g->WG_WIDTH;
+		int mm,nn;		
+		double omega = 0.11;
+		double amp = 0.55;
+		int LOC = 256;
+		double  coef =  (  1 -  exp (   (  -1 *         (  g->Ti * omega * 1. ) ) ) ) ;
+		for(mm=0;mm<g->sizeX;mm++){
+			double  kperp =   (       (  1 *         floor (         (  mm / width ) ) ) / (g->sizeX/width) ) ;
+			double phs=(  g->Ti * omega -     (  2 *  (  M_PI * kperp ) ) ) ;
+			//printf("%f\n",phs);			
+					if( ((int)mm) % ((int)width) ==(int)(width/2) )
+					Ex(g,mm,LOC) += amp *  sin ( phs ) *  coef;
+			//printf("%f\n",Ez(g,mm,80));			
+		}
+		//Ez(g,g->sizeX/2,g->sizeY/2) += sin(0.1*g->Ti);
+
 		end=clock();
 		double Tfield = (double)(end - begin) / CLOCKS_PER_SEC;
 		printf("steps=%d,time=%f\n",g->Ti,Tfield);
 
-}
-		switch (g->type){	
-			case OneD:
-				exit(127);
-				break;
-			case TMz:
-				fclose(tmpEz);
-				fclose(tmpBy);
-				fclose(tmpBx);
-				break;
-			case TEz:
-				fclose(tmpBz);
-				fclose(tmpEy);
-				fclose(tmpEx);
-				break;
-		}
-		return 0;
 	}
+	switch (g->type){	
+		case OneD:
+			exit(127);
+			break;
+		case TMz:
+			fclose(tmpEz);
+			fclose(tmpBy);
+			fclose(tmpBx);
+			break;
+		case TEz:
+			fclose(tmpBz);
+			fclose(tmpEy);
+			fclose(tmpEx);
+			break;
+	}
+	return 0;
+}
 

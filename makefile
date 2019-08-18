@@ -1,7 +1,7 @@
 CC=clang 
 head=./head/
-CFLAG=  -I$(head) 
-sources=inc.o main.o update.o GridInit.o abc.o update_pml.o
+CFLAG= -O3 -I$(head) 
+sources=inc.o main.o update.o GridInit.o abc.o update_pml.o filter.o
 a.out: $(sources)
 	$(CC) -o a.out $(CFLAG) $(sources) -lm
 update.o: update.c $(head)update.h
@@ -14,6 +14,8 @@ abc.o: abc.c $(head)abc.h
 	$(CC) -c $(CFLAG) abc.c 
 update_pml.o: update_pml.c $(head)update_pml.h
 	$(CC) -c $(CFLAG) update_pml.c 
+filter.o: filter.c $(head)filter.h
+	$(CC) -c $(CFLAG) filter.c 
 main.o: main.c  $(head)fdtd.h
 	$(CC) -c $(CFLAG) main.c
 

@@ -36,6 +36,9 @@ struct Grid{
 	int output,DUMP;
 	int type;
 	double imp0, c, cdtds, dt, dx;
+//WG
+	int WG_LEN;
+	int WG_WIDTH;
 };
 
 typedef struct Grid Grid;

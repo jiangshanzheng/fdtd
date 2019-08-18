@@ -25,11 +25,14 @@ static double mur=1.0;
 static double epsir=1.0;
 int GridInit(Grid * g){
 
-	g->type = TMz;
-	g->sizeX = 148;
-	g->sizeY = 148;
+	g->type = TEz;
+	g->sizeX = 128;
+	g->sizeY = 512;
+	g->WG_LEN = 512;
+	g->WG_WIDTH = 16;
 	g->sizeT = 300;
 	g->output = 1;
+	//per DUMP
 	g->DUMP	= 1;
 	g->dt  = 1./sqrt(2);
 	g->dx = 1.;
@@ -51,9 +54,11 @@ int GridInit(Grid * g){
 
 	g->BBl = 0;
 	g->BBr = g->sizeX-1;
+	g->BBr = 0;
 
 	g->BTl = 0;
 	g->BTr = g->sizeX-1;
+	g->BTr = 0;
 	g->LL = g->BLt - g->BLb;
 	g->LR = g->BRt - g->BRb;
 	g->LB = g->BBr - g->BBl;
