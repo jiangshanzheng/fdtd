@@ -8,7 +8,6 @@
 #include"inc.h"
 #include"filter.h"
 #include"update.h"
-#include"update_pml.h"
 #include"GridInit.h"
 #include"abc.h"
 
@@ -71,11 +70,11 @@ int main(){
 		begin = clock();
 		
 		//printf("%f\n",Hz(g,g->sizeX/2,g->sizeY/2));
-	updateH_pml(g);
+	updateH(g);
 		//updateH(g);
 		//Hz(g,g->sizeX/2,g->sizeY/2) += 10.0*sin(0.1*g->Ti);
 
-	updateE_pml(g);
+	updateE(g);
 		//updateE(g);
 		//abc(g);
 		//filterE(g);

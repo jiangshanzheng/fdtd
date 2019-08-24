@@ -3,8 +3,8 @@ import numpy as np
 #1 TMz
 mod=0;
 step=500
-sizeX=128
-sizeY=128
+sizeX=256
+sizeY=256
 #fid = open("tmpBx.dat",'rb')
 #Bx=np.fromfile(fid, dtype="float64",count=sizeX*(sizeY-1)*step).reshape((step,sizeY-1,sizeX))
 #fid = open("tmpBy.dat",'rb')
