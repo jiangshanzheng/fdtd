@@ -9,7 +9,7 @@
 #include<math.h>
 #include"fdtd.h"
 #include"GridInit.h"
-#define VAL 0.0
+#define VAL 0.1
 void coef_Ex(Grid *g,int smm, int emm, int snn, int enn);
 void coef_Ey(Grid *g,int smm, int emm, int snn, int enn);
 void coef_Ez(Grid *g,int smm, int emm, int snn, int enn);
@@ -25,7 +25,7 @@ static double mur=1.0;
 static double epsir=1.0;
 int GridInit(Grid * g){
 
-	g->type = TMz;
+	g->type = TEz;
 	g->sizeX = 128;
 	g->sizeY = 128;
 	g->sizeT = 500;
@@ -328,10 +328,10 @@ int mm,nn;
 					cHzyH(g,mm,nn) = 1.0;
 				}
 			}
-			sig_mx=0.1;
-			sig_my=0.1;
-			sig_x=0.1;
-			sig_y=0.1;
+			sig_mx=VAL;
+			sig_my=VAL;
+			sig_x=VAL;
+			sig_y=VAL;
 			//conner 00
 			smm=0;
 			emm=g->PML_Layers-1;
@@ -411,9 +411,9 @@ int mm,nn;
 			coef_Hz(g,smm,emm,snn,enn);		
 
 			//ridges B T
-			sig_mx=0.1;
+			sig_mx=VAL;
 			sig_my=0.0;
-			sig_x=0.1;
+			sig_x=VAL;
 			sig_y=0.0;
 	
 			smm=g->PML_Layers-1;
@@ -456,9 +456,10 @@ int mm,nn;
 
 			//ridge L R
 			sig_mx=0.;
-			sig_my=0.1;
+			sig_my=VAL;
 			sig_x=0.;
-			sig_y=0.1;
+			sig_y=VAL;
+
 			smm=0;
 			emm=g->PML_Layers-1;
 			snn=g-> PML_Layers;

@@ -81,7 +81,7 @@ int main(){
 		//filterE(g);
 		int LOCX = g->sizeX/2;
 		int LOCY = g->sizeY/2;
-		Ez(g,LOCX,LOCY) += point(g,0.1,10,0.,LOCX,LOCY);
+		Ex(g,LOCX,LOCY) += point(g,0.1,10,0.,LOCX,LOCY);
 		end=clock();
 		double Tfield = (double)(end - begin) / CLOCKS_PER_SEC;
 		printf("steps=%d,time=%f\n",g->Ti,Tfield);

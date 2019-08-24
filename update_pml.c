@@ -37,8 +37,8 @@ int updateH_pml(Grid *g){
 					//mm nn in H for half, in Ey mm for int, nn for half; in Ex mm for half, nn for int
 					//the number of hz is M-1 * N-1 same to definition, so no cut-off on Hz, what is cut off!!!left start with mm nn, num depend on left
 					//Hz(g,mm,nn) = Hz(g,mm,nn) + ( ( Ex(g,mm,nn+1) - Ex(g,mm,nn) ) - (Ey(g,mm+1,nn) - Ey(g,mm,nn) ) ) * g->cdtds;
-					Hzx(g,mm,nn) = cHzxH(g,mm,nn)*Hzx(g,mm,nn) + cHzxE(g,mm,nn)*( - ( Ey(g,mm,nn) - Ey(g,mm-1,nn) ));
-					Hzy(g,mm,nn) = cHzyH(g,mm,nn)*Hzy(g,mm,nn) + cHzyE(g,mm,nn)*( ( Ex(g,mm,nn) - Ex(g,mm,nn-1) ));
+					Hzx(g,mm,nn) = cHzxH(g,mm,nn)*Hzx(g,mm,nn) + cHzxE(g,mm,nn)*( - ( Ey(g,mm+1,nn) - Ey(g,mm,nn) ));
+					Hzy(g,mm,nn) = cHzyH(g,mm,nn)*Hzy(g,mm,nn) + cHzyE(g,mm,nn)*( ( Ex(g,mm,nn+1) - Ex(g,mm,nn) ));
 					Hz(g,mm,nn) = Hzx(g,mm,nn) + Hzy(g,mm,nn);
 					//printf("%.1f\n",Hz(g,mm,nn));
 					//printf("%.1f-%.1f-%.1f-%.1f\n",cHzxE(g,mm,nn),cHzxH(g,mm,nn),cHzyE(g,mm,nn),cHzyH(g,mm,nn));

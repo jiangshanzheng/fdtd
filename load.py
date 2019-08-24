@@ -1,7 +1,7 @@
 import numpy as np
 #0 TEz
 #1 TMz
-mod=1;
+mod=0;
 step=500
 sizeX=128
 sizeY=128
