@@ -36,7 +36,7 @@ static double * TEzBT_012_01;
 
 
 
-void BoundaryInit(Grid *g){
+void ABCInit(Grid *g){
 //alloc big is not a problem
 	switch (g->type){
 		case OneD:

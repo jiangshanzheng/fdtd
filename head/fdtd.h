@@ -25,6 +25,7 @@ struct Grid{
 	double * cexh, *ceyh, * chzxh, * chzyh;
 //boundary
 	int PML_Layers;
+	int sig_max;
 	int LL, BLb, BLt;
 	int LR, BRb, BRt;
 	int LB, BBl, BBr;

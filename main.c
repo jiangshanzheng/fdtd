@@ -5,7 +5,6 @@
 #include<time.h>
 #include"fdtd.h"
 #include"inc.h"
-#include"inc.h"
 #include"filter.h"
 #include"update.h"
 #include"GridInit.h"
@@ -17,7 +16,7 @@ int main(){
 	Grid *g;
 	ALLOC_1D(g,1,Grid);
 	GridInit(g);
-	//BoundaryInit(g);
+	//ABCInit(g);
 	PMLInit(g);
 	FILE * tmpEz = NULL; 
 	FILE * tmpBx = NULL; 
@@ -69,18 +68,19 @@ int main(){
 
 		begin = clock();
 		
-		//printf("%f\n",Hz(g,g->sizeX/2,g->sizeY/2));
-	updateH(g);
+		updateH(g);
 		//updateH(g);
 		//Hz(g,g->sizeX/2,g->sizeY/2) += 10.0*sin(0.1*g->Ti);
 
-	updateE(g);
+		updateE(g);
 		//updateE(g);
 		//abc(g);
 		//filterE(g);
 		int LOCX = g->sizeX/2;
 		int LOCY = g->sizeY/2;
-		Ex(g,LOCX,LOCY) += point(g,0.1,10,0.,LOCX,LOCY);
+		//Ex(g,LOCX,LOCY) += sin(g->Ti*1.11);
+		Ez(g,LOCX,LOCY) += point(g,0.1,10.,0.,LOCX,LOCY);
+		//printf("%f\n",Ex(g,g->sizeX/2,g->sizeY/2));
 		end=clock();
 		double Tfield = (double)(end - begin) / CLOCKS_PER_SEC;
 		printf("steps=%d,time=%f\n",g->Ti,Tfield);
