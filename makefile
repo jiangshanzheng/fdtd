@@ -18,4 +18,5 @@ filter.o: filter.c $(head)filter.h
 	$(CC) -c $(CFLAG) filter.c 
 main.o: main.c  $(head)fdtd.h
 	$(CC) -c $(CFLAG) main.c
-
+clean:
+	rm *.o

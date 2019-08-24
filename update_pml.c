@@ -40,7 +40,7 @@ int updateH_pml(Grid *g){
 					Hzx(g,mm,nn) = cHzxH(g,mm,nn)*Hzx(g,mm,nn) + cHzxE(g,mm,nn)*( - ( Ey(g,mm,nn) - Ey(g,mm-1,nn) ));
 					Hzy(g,mm,nn) = cHzyH(g,mm,nn)*Hzy(g,mm,nn) + cHzyE(g,mm,nn)*( ( Ex(g,mm,nn) - Ex(g,mm,nn-1) ));
 					Hz(g,mm,nn) = Hzx(g,mm,nn) + Hzy(g,mm,nn);
-					printf("%.1f\n",Hz(g,mm,nn));
+					//printf("%.1f\n",Hz(g,mm,nn));
 					//printf("%.1f-%.1f-%.1f-%.1f\n",cHzxE(g,mm,nn),cHzxH(g,mm,nn),cHzyE(g,mm,nn),cHzyH(g,mm,nn));
 				}
 			}
@@ -73,13 +73,15 @@ int updateE_pml(Grid *g){
 		case TEz:
 			//Ex at nn=0 nn=sizeX-1, all H start n-1
 			for(mm=0; mm < g->sizeX-1;mm++){
-				for(nn=1;nn < g->sizeY -1;nn++)
+				for(nn=1;nn < g->sizeY -1;nn++){
 					Ex(g,mm,nn) = cExE(g,mm,nn)*Ex(g,mm,nn) + cExH(g,mm,nn) * (Hz(g,mm,nn) - Hz(g,mm,nn-1));
+				}
 			}
 			//Ey at nn=0 nn=sizeX-1,H start m-1
 			for(mm=1; mm < g->sizeX-1;mm++){
-				for(nn=0;nn < g->sizeY-1;nn++)
+				for(nn=0;nn < g->sizeY-1;nn++){
 					Ey(g,mm,nn) = cEyE(g,mm,nn) * Ey(g,mm,nn) - cEyH(g,mm,nn) * (Hz(g,mm,nn) - Hz(g,mm-1,nn));
+				}
 			}
 			break;
 		default:

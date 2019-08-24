@@ -7,6 +7,8 @@
 
 #include<stdio.h>
 #include"fdtd.h"
+#define WIDTH 16
+#define LEN 256
 double filter(Grid *g, int mm, int nn);
 int filterH(Grid *g){
 	return 0;
@@ -53,8 +55,8 @@ int filterE(Grid *g){
 }
 inline double filter(Grid *g, int mm, int nn){
 	double ret;
-	if ( (nn <  g->WG_LEN) &&  (nn > 1) ){
-		if( mm%g->WG_WIDTH <=2 ){
+	if ( (nn < LEN) &&  (nn > 0) ){
+		if( mm%WIDTH <=2 ){
 			ret = 0.;
 			//			printf("xm=%d\n",mm);
 		}

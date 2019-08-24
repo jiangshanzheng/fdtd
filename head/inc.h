@@ -8,4 +8,5 @@
 #ifndef _INC_H
 #define _INC_H
 double inc(Grid *, double);
+double point(Grid *, double omega, double amp, double phs, int, int );
 #endif

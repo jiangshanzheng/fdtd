@@ -1,10 +1,10 @@
 import numpy as np
 #0 TEz
 #1 TMz
-mod=0;
-step=300
+mod=1;
+step=500
 sizeX=128
-sizeY=512
+sizeY=128
 #fid = open("tmpBx.dat",'rb')
 #Bx=np.fromfile(fid, dtype="float64",count=sizeX*(sizeY-1)*step).reshape((step,sizeY-1,sizeX))
 #fid = open("tmpBy.dat",'rb')
@@ -12,7 +12,7 @@ sizeY=512
 
 if 0==mod:
     fid = open("tmpEx.dat",'rb')
-    Ex=np.fromfile(fid, dtype="float64",count=(sizeX-1)*(sizeY)*step).reshape((step,sizeX-1,sizeY)).transpose()
+    Ex=np.fromfile(fid, dtype="float64",count=(sizeX-1)*(sizeY)*step).reshape((step,sizeX-1,sizeY)).transpose(1,2,0)
     fid = open("tmpEy.dat",'rb')
     Ey=np.fromfile(fid, dtype="float64",count=(sizeX)*(sizeY-1)*step).reshape((step,sizeX,sizeY-1)).transpose(1,2,0)
     fid = open("tmpBz.dat",'rb')

@@ -69,32 +69,19 @@ int main(){
 		}
 
 		begin = clock();
-
+		
 		//printf("%f\n",Hz(g,g->sizeX/2,g->sizeY/2));
-		//updateH_pml(g);
-		updateH(g);
+	updateH_pml(g);
+		//updateH(g);
 		//Hz(g,g->sizeX/2,g->sizeY/2) += 10.0*sin(0.1*g->Ti);
 
-		//updateE_pml(g);
-		updateE(g);
-		abc(g);
-		filterE(g);
-		int width = g->WG_WIDTH;
-		int mm,nn;		
-		double omega = 0.11;
-		double amp = 0.55;
-		int LOC = 256;
-		double  coef =  (  1 -  exp (   (  -1 *         (  g->Ti * omega * 1. ) ) ) ) ;
-		for(mm=0;mm<g->sizeX;mm++){
-			double  kperp =   (       (  1 *         floor (         (  mm / width ) ) ) / (g->sizeX/width) ) ;
-			double phs=(  g->Ti * omega -     (  2 *  (  M_PI * kperp ) ) ) ;
-			//printf("%f\n",phs);			
-					if( ((int)mm) % ((int)width) ==(int)(width/2) )
-					Ex(g,mm,LOC) += amp *  sin ( phs ) *  coef;
-			//printf("%f\n",Ez(g,mm,80));			
-		}
-		//Ez(g,g->sizeX/2,g->sizeY/2) += sin(0.1*g->Ti);
-
+	updateE_pml(g);
+		//updateE(g);
+		//abc(g);
+		//filterE(g);
+		int LOCX = g->sizeX/2;
+		int LOCY = g->sizeY/2;
+		Ez(g,LOCX,LOCY) += point(g,0.1,10,0.,LOCX,LOCY);
 		end=clock();
 		double Tfield = (double)(end - begin) / CLOCKS_PER_SEC;
 		printf("steps=%d,time=%f\n",g->Ti,Tfield);
@@ -117,4 +104,3 @@ int main(){
 	}
 	return 0;
 }
-
